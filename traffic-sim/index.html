@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Agent Traffic Simulation</title>
+</head>
+<body>
+
+  <!-- SETUP OVERLAY -->
+  <div id="setup-overlay">
+    <div class="glass-card">
+      <h1>Traffic Simulation</h1>
+      <p style="color:#aaa;margin:-12px 0 18px;font-size:0.88em">Powered by Google ADK Multi-Agent System</p>
+
+      <!-- Scenario Selection -->
+      <div class="option-group">
+        <label>Scenario</label>
+        <div class="select-options" id="opt-scenario">
+          <button class="opt-btn active" data-val="SAFE"     >✅ Safety Scenario</button>
+          <button class="opt-btn"        data-val="HAZARDOUS">⚠️ Hazardous Scenario</button>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label>Weather</label>
+        <div class="select-options" id="opt-weather">
+          <button class="opt-btn active" data-val="Sunny">☀️ Sunny</button>
+          <button class="opt-btn" data-val="Rain">🌧️ Rainy</button>
+          <button class="opt-btn" data-val="Snow">❄️ Snowy</button>
+          <button class="opt-btn" data-val="Foggy">🌫️ Foggy</button>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label>Traffic Density</label>
+        <div class="select-options" id="opt-traffic">
+          <button class="opt-btn" data-val="Low">🟢 Low</button>
+          <button class="opt-btn active" data-val="Normal">🟡 Medium</button>
+          <button class="opt-btn" data-val="High">🔴 High</button>
+        </div>
+      </div>
+
+      <button id="start-sim-btn">▶ Start Simulation</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <div id="main-container">
+
+    <!-- LEFT: Control Panel -->
+    <div id="control-panel">
+      <div class="panel-header"><h2>🤖 ADK Traffic Agent</h2></div>
+
+      <div class="controls-section">
+        <h3>Live Environment</h3>
+        <div class="mini-controls">
+          <select id="live-weather">
+            <option value="Sunny">☀️ Sunny</option>
+            <option value="Rain">🌧️ Rainy</option>
+            <option value="Snow">❄️ Snowy</option>
+            <option value="Foggy">🌫️ Foggy</option>
+          </select>
+          <select id="live-traffic">
+            <option value="Low">Traffic: Low</option>
+            <option value="Normal" selected>Traffic: Medium</option>
+            <option value="High">Traffic: High</option>
+          </select>
+        </div>
+
+        <div class="traffic-light-control">
+          <label>Traffic Signal</label>
+          <div class="traffic-toggle-row">
+            <button id="toggle-red-btn" class="traffic-toggle-btn active-red">🔴 RED</button>
+            <button id="toggle-green-btn" class="traffic-toggle-btn">🟢 GREEN</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-interface">
+        <div id="chat-history">
+          <div class="chat-msg ai">Hello! I'm your Road Safety Expert. Ask me anything about traffic or crossing rules.</div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="ai-input" placeholder="Ask about road safety…" />
+          <button id="mic-btn">🎙️</button>
+          <button id="send-btn">Ask</button>
+        </div>
+        <div id="ai-status">Ready</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: 3D View -->
+    <div id="simulation-view">
+      <div id="app"></div>
+
+      <div id="ui-layer">
+
+        <!-- Status bar — below HUD, never overlaps it -->
+        <div id="status-message" style="display:none;"></div>
+
+        <!-- HUD: top-right, always on top -->
+        <div class="sim-hud">
+          <div id="scenario-badge" class="scenario-badge safe">✅ SAFETY</div>
+          <button id="home-btn">🏠 Home</button>
+          <button id="restart-btn">⟳ Restart</button>
+          <div id="score-display">Score: 100</div>
+        </div>
+
+        <!-- Countdown timer (right side of view, visible in hazardous) -->
+        <div id="countdown-display" style="display:none;">30</div>
+
+        <!-- AI Decision Panel (bottom-left) -->
+        <div id="ai-alert-panel" class="ai-alert-hide">
+          <div class="ai-alert-header">
+            <span class="ai-alert-icon">🤖</span>
+            <span class="ai-alert-title">Agent Decisions</span>
+            <span id="ai-risk-badge" class="risk-badge risk-low" style="margin-left:auto">LOW</span>
+          </div>
+          <div class="ai-alert-body">
+            <div class="agent-decisions">
+              <span class="ai-agent-tag" id="ai-tag-light">🚦 Light: —</span>
+              <span class="ai-agent-tag" id="ai-tag-safety">🛡️ Safety: —</span>
+              <span class="ai-agent-tag" id="ai-tag-driver">🚗 Vehicle: —</span>
+              <span class="ai-agent-tag" id="ai-tag-pedestrian">🚶 Pedestrian: —</span>
+              <span class="ai-agent-tag" id="ai-tag-scenario">🎭 Scenario: —</span>
+            </div>
+            <p id="ai-message-text" class="ai-message-text">Awaiting AI assessment…</p>
+          </div>
+        </div>
+
+        <!-- Safety message bar (bottom-centre, shown in hazardous) -->
+        <div id="safety-msg-bar" style="display:none;"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>

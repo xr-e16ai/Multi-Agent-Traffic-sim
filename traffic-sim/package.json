@@ -1,0 +1,17 @@
+{
+  "name": "traffic-sim",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npx vite",
+    "build": "npx vite build",
+    "preview": "npx vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "three": "^0.182.0"
+  }
+}

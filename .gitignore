@@ -1,0 +1,47 @@
+# Environment Variables
+.env
+.env.local
+.env.*
+
+# Google ADK
+.adk/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# Node.js
+node_modules/
+dist/
+build/
+
+# Vite
+.vite/
+
+# IDE
+.vscode/
+.idea/
+
+# API Keys / Secrets
+api_key.js
+config/secrets.js
+credentials.json
+service-account.json
+firebase-adminsdk.json
+*.pem
+*.key
+
+# OS Files
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+.firebase/

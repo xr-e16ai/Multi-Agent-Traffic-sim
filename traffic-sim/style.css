@@ -1,0 +1,833 @@
+:root {
+  font-family: 'Inter', system-ui, sans-serif;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --primary-color: #4facfe;
+  --accent-color: #00f2fe;
+  --bg-dark: #121212;
+  --panel-bg: #1e1e1e;
+  --text-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+}
+
+/* --- SETUP OVERLAY --- */
+#setup-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  /* Dynamic bg */
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 40px;
+  width: 500px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  text-align: center;
+}
+
+#status-message {
+  position: absolute;
+  top: 10%;
+  width: 100%;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  z-index: 2000;
+  pointer-events: none;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.crash-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(20, 20, 20, 0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid #e74c3c;
+  color: white;
+  z-index: 3000;
+  width: 60%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(231, 76, 60, 0.4);
+}
+
+.crash-modal h2 {
+  color: #e74c3c;
+  margin-top: 0;
+}
+
+.crash-modal p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.crash-modal button {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.crash-modal button:hover {
+  background: #c0392b;
+}
+
+.glass-card h1 {
+  margin-bottom: 30px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.option-group {
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.option-group label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: #ddd;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.select-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.opt-btn {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.opt-btn.active,
+.opt-btn:hover {
+  background: var(--primary-color);
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+#start-sim-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  border: none;
+  border-radius: 10px;
+  color: white;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+/* --- MAIN CONTAINER (SPLIT) --- */
+#main-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  opacity: 0;
+  /* Hidden initially until overlay fades */
+  transition: opacity 1s ease;
+}
+
+/* LEFT PANEL */
+#control-panel {
+  width: 30%;
+  background: var(--panel-bg);
+  border-right: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--accent-color);
+}
+
+.controls-section {
+  margin-top: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #333;
+}
+
+.controls-section h3 {
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+.mini-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.mini-controls select {
+  padding: 10px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* AI CHAT */
+.ai-interface {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  overflow: hidden;
+  /* Prevent expansion */
+  min-height: 0;
+  /* Important for flex child scrolling */
+}
+
+#chat-history {
+  flex: 1;
+  background: #111;
+  border-radius: 12px;
+  padding: 15px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+  border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-msg {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  max-width: 85%;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.chat-msg.ai {
+  background: #2a2a40;
+  color: #e0e0e0;
+  border-left: 4px solid var(--primary-color);
+  align-self: flex-start;
+}
+
+.chat-msg.user {
+  background: var(--primary-color);
+  color: white;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.chat-input-area {
+  display: flex;
+  gap: 10px;
+}
+
+#ai-input {
+  flex-grow: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #222;
+  color: white;
+}
+
+#mic-btn,
+#send-btn {
+  padding: 0 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #333;
+  color: white;
+  font-size: 1.2rem;
+}
+
+#send-btn {
+  font-size: 1rem;
+  background: var(--primary-color);
+  font-weight: bold;
+}
+
+#mic-btn.listening {
+  color: #ff4d4d;
+  animation: pulse 1s infinite;
+}
+
+#ai-status {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 5px;
+  text-align: right;
+}
+
+/* RIGHT PANEL */
+#simulation-view {
+  width: 70%;
+  position: relative;
+  background: black;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+canvas {
+  display: block;
+}
+
+/* UI OVERLAYS in 3D View */
+#ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#status-message {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 30px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 30px;
+  display: none;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.sim-hud {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  pointer-events: auto;
+}
+
+
+
+#restart-btn {
+  padding: 10px 20px;
+  background: #ff4d4d;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   AI SAFETY ALERT PANEL
+───────────────────────────────────────────────────────────────────────────── */
+
+#ai-alert-panel {
+  position: absolute;
+  bottom: 24px;
+  left: 20px;
+  width: 280px;
+  background: rgba(10, 10, 20, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 172, 254, 0.15);
+  pointer-events: none;
+  z-index: 500;
+  overflow: hidden;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.ai-alert-hide {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.ai-alert-show {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Glowing top border accent */
+#ai-alert-panel::before {
+  content: '';
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+}
+
+.ai-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ai-alert-icon {
+  font-size: 1.1rem;
+}
+
+.ai-alert-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent-color);
+}
+
+.ai-alert-body {
+  padding: 10px 14px 14px;
+}
+
+.ai-alert-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ai-alert-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #888;
+  min-width: 36px;
+}
+
+/* ── Risk badges ── */
+.risk-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: background 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.risk-low {
+  background: rgba(0, 220, 130, 0.18);
+  color: #00dc82;
+  box-shadow: 0 0 10px rgba(0, 220, 130, 0.3);
+  border: 1px solid rgba(0, 220, 130, 0.35);
+}
+
+.risk-medium {
+  background: rgba(255, 170, 0, 0.18);
+  color: #ffaa00;
+  box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+  border: 1px solid rgba(255, 170, 0, 0.35);
+}
+
+.risk-high {
+  background: rgba(255, 60, 60, 0.18);
+  color: #ff4040;
+  box-shadow: 0 0 12px rgba(255, 60, 60, 0.4);
+  border: 1px solid rgba(255, 60, 60, 0.4);
+  animation: riskPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes riskPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(255, 60, 60, 0.4); }
+  50%       { box-shadow: 0 0 22px rgba(255, 60, 60, 0.75); }
+}
+
+/* ── Agent decision tags ── */
+.agent-decisions {
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ai-agent-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ccc;
+  white-space: nowrap;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.ai-agent-tag.active-safe {
+  background: rgba(0, 220, 130, 0.12);
+  color: #00dc82;
+  border-color: rgba(0, 220, 130, 0.3);
+}
+
+.ai-agent-tag.active-warn {
+  background: rgba(255, 60, 60, 0.12);
+  color: #ff6060;
+  border-color: rgba(255, 60, 60, 0.3);
+}
+
+/* ── Safety message text ── */
+.ai-message-text {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #bbb;
+  line-height: 1.5;
+  font-style: italic;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding-top: 8px;
+  transition: color 0.4s ease;
+}
+/* Traffic Light Toggle Controls */
+.traffic-light-control {
+    margin-top: 8px;
+}
+.traffic-light-control label {
+    display: block;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.traffic-toggle-row {
+    display: flex;
+    gap: 8px;
+}
+.traffic-toggle-btn {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+.traffic-toggle-btn.active-red {
+    background: rgba(220, 38, 38, 0.4);
+    border-color: #dc2626;
+    color: #fca5a5;
+    font-weight: bold;
+}
+.traffic-toggle-btn.active-green {
+    background: rgba(22, 163, 74, 0.4);
+    border-color: #16a34a;
+    color: #86efac;
+    font-weight: bold;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SUCCESS OVERLAY (Bug 2) — sits inside #status-message
+   ════════════════════════════════════════════════════════ */
+#status-message {
+    /* override any hard pixel width so the success block can expand */
+    max-width: 90%;
+    width: auto;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AGENT DECISION PANEL — full-label tags (Bug 7)
+   ════════════════════════════════════════════════════════ */
+.agent-decisions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.ai-agent-tag {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #ccc;
+    white-space: nowrap;
+    transition: background 0.25s, color 0.25s;
+    display: block;         /* full-width row per agent */
+}
+
+.ai-agent-tag.active-safe {
+    background:   rgba(0,220,130,0.13);
+    color:        #00dc82;
+    border-color: rgba(0,220,130,0.3);
+}
+
+.ai-agent-tag.active-warn {
+    background:   rgba(255,60,60,0.13);
+    color:        #ff6060;
+    border-color: rgba(255,60,60,0.3);
+}
+
+/* Risk badge in header */
+#ai-alert-panel .ai-alert-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ════════════════════════════════════════════════════
+   NEW ENHANCEMENTS — added below original styles
+   ════════════════════════════════════════════════ */
+
+/* HUD toolbar — always visible, z-index above everything */
+.sim-hud {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.sim-hud button {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 17px;       /* pill shape */
+  cursor: pointer;
+  font-size: 0.78em;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+  transition: transform 0.15s, box-shadow 0.15s;
+  line-height: 34px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+.sim-hud button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+}
+.sim-hud button:active { transform: translateY(0); }
+
+#home-btn {
+  background: linear-gradient(135deg, #1a6baa, #2196F3);
+  border-color: rgba(100,180,255,0.5);
+  color: #fff;
+}
+#restart-btn {
+  background: linear-gradient(135deg, #b71c1c, #e53935);
+  border-color: rgba(255,120,120,0.5);
+  color: #fff;
+}
+
+/* Scenario badge */
+.scenario-badge {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 17px;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 34px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.scenario-badge.safe {
+  background: rgba(0,220,130,0.14);
+  border: 1px solid rgba(0,220,130,0.45);
+  color: #00dc82;
+}
+.scenario-badge.haz {
+  background: rgba(255,107,53,0.18);
+  border: 1px solid rgba(255,107,53,0.5);
+  color: #ff6b35;
+  animation: hazPulse 1.5s infinite;
+}
+@keyframes hazPulse { 0%,100%{opacity:1} 50%{opacity:0.65} }
+
+/* Score display */
+#score-display {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 17px;
+  font-size: 0.78em;
+  font-weight: 700;
+  line-height: 34px;
+  background: rgba(255,215,0,0.15);
+  border: 1.5px solid rgba(255,215,0,0.5);
+  color: #ffd700;
+  min-width: 84px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* Status message — sits below HUD, never overlaps, never overflows */
+#status-message {
+  position: absolute;
+  top: 62px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 46%;          /* never reaches the right-side buttons */
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.78);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+  line-height: 1.5;
+  z-index: 2000;
+  pointer-events: none;
+  font-size: 0.82rem;      /* smaller so long messages fit */
+  font-weight: 600;
+  white-space: normal;     /* allow wrapping inside the box */
+  word-break: break-word;
+  overflow: hidden;
+}
+
+/* Countdown timer */
+#countdown-display {
+  position: absolute;
+  right: 55px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 5.5rem;
+  font-weight: 900;
+  color: #00dc82;
+  text-shadow: 0 0 24px rgba(0,220,130,0.7), 0 2px 8px rgba(0,0,0,0.9);
+  z-index: 1500;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.4s;
+}
+
+/* Safety message bar */
+#safety-msg-bar {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 8px 20px;
+  color: #ffffcc;
+  font-size: 0.82em;
+  font-weight: 500;
+  max-width: 70%;
+  text-align: center;
+  z-index: 1200;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+
+/* Agent tag layout — full column */
+.agent-decisions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.ai-agent-tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #ccc;
+  display: block;
+  transition: background 0.25s, color 0.25s;
+}
+.ai-agent-tag.active-safe {
+  background: rgba(0,220,130,0.13);
+  color: #00dc82;
+  border-color: rgba(0,220,130,0.3);
+}
+.ai-agent-tag.active-warn {
+  background: rgba(255,60,60,0.13);
+  color: #ff6060;
+  border-color: rgba(255,60,60,0.3);
+}
+
+/* AI panel header flex */
+#ai-alert-panel .ai-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Scenario opt buttons */
+.opt-btn[data-val="SAFE"].active    { background: rgba(0,220,130,0.2); border-color: #00dc82 !important; color: #00dc82; }
+.opt-btn[data-val="HAZARDOUS"].active { background: rgba(255,107,53,0.2); border-color: #ff6b35 !important; color: #ff6b35; }
